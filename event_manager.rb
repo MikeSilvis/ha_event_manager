@@ -94,19 +94,30 @@ class EventManager
   def state_stats
     state_data = {}
     @file.each do |line|
-      state = line[:state] unless line[:state].nil? # Find the State
-      if state_data[state].nil? # Does the state's bucket exist in state_data?
+      state = line[:state]
+      
+      if state.nil?
+      	false
+      elsif state_data[state].nil? # Does the state's bucket exist in state_data?
         state_data[state] = 1 # If that bucket was nil then start it with this one person
       else
         state_data[state] = state_data[state] + 1  # If the bucket exists, add one
       end
     end
 
-    state_data = state_data.sort_by{|state, counter| state unless state.nil?}
+    state_data = state_data.sort_by{|state, counter| state.to_s }.reverse
+    puts state_data.count
 
     state_data.each do |state,counter|
     	puts "#{state}: #{counter}"
     end
+
+    ranks = state_data.sort_by{|state, counter| counter}.collect{|state, counter| state}.reverse
+	state_data = state_data.sort_by{|state, counter| state}
+
+	state_data.each do |state, counter|
+	  puts "#{state}:\t#{counter}\t(#{ranks.index(state) + 1})"
+	end
   end
 
   private
